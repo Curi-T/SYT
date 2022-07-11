@@ -21,6 +21,7 @@ import java.util.Random;
  */
 @RestController
 @RequestMapping("/admin/hosp/hospitalSet")
+@CrossOrigin
 public class HospitalSetController {
 
 
@@ -76,7 +77,6 @@ public class HospitalSetController {
         Page<HospitalSet> page = new Page<>(current, limit);
         //构建条件
         QueryWrapper<HospitalSet> wrapper = new QueryWrapper<>();
-        //医院名称
         String hosname = hospitalSetQueryVo.getHosname();
         //医院编号
         String hoscode = hospitalSetQueryVo.getHoscode();
