@@ -97,11 +97,11 @@ public class HttpRequestHelper {
                 postdata.append(param.getKey()).append("=")
                         .append(param.getValue()).append("&");
             }
-            log.info(String.format("--> 发送请求：post data %1s", postdata));
+//            log.info(String.format("--> 发送请求：post data %1s", postdata));
             byte[] reqData = postdata.toString().getBytes("utf-8");
             byte[] respdata = HttpUtil.doPost(url,reqData);
             result = new String(respdata);
-            log.info(String.format("--> 应答结果：result data %1s", result));
+//            log.info(String.format("--> 应答结果：result data %1s", result));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
