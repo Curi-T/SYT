@@ -1,13 +1,19 @@
 package cn.cqut.yygh.hosp.service.impl;
 
+import cn.cqut.yygh.cmn.client.DictFeignClient;
+import cn.cqut.yygh.enums.DictEnum;
 import cn.cqut.yygh.hosp.repository.HospitalRepository;
 import cn.cqut.yygh.hosp.service.HospitalService;
 import cn.cqut.yygh.model.hosp.Hospital;
+import cn.cqut.yygh.vo.hosp.HospitalQueryVo;
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -17,12 +23,10 @@ import java.util.Map;
 @Service
 public class HospitalServiceImpl implements HospitalService {
 
-    private HospitalRepository hospitalRepository;
-
     @Autowired
-    public void setHospitalRepository(HospitalRepository hospitalRepository) {
-        this.hospitalRepository = hospitalRepository;
-    }
+    private HospitalRepository hospitalRepository;
+    @Autowired
+    private DictFeignClient dictFeignClient;
 
     /**
      * 1.上传医院接口
@@ -67,6 +71,85 @@ public class HospitalServiceImpl implements HospitalService {
     @Override
     public Hospital getByHoscode(String hoscode) {
         Hospital hospital = hospitalRepository.getHospitalByHoscode(hoscode);
+        return hospital;
+    }
+
+    /**
+     * 3.获取分页、条件列表
+     *
+     * @param page
+     * @param limit
+     * @param hospitalQueryVo
+     * @return
+     */
+    @Override
+    public Page selectPage(Integer page, Integer limit, HospitalQueryVo hospitalQueryVo) {
+        Pageable pageable = PageRequest.of(page - 1, limit);
+        ExampleMatcher matcher = ExampleMatcher.matching().withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING).withIgnoreCase(true);
+        Hospital hospital = new Hospital();
+        BeanUtils.copyProperties(hospitalQueryVo, hospital);
+        Example<Hospital> example = Example.of(hospital, matcher);
+        Page<Hospital> pages = hospitalRepository.findAll(example, pageable);
+
+        //获取查询list集合，遍历进行医院等级封装
+        pages.getContent().stream().forEach(item -> {
+            this.setHosptiallHosType(item);
+        });
+        return pages;
+    }
+
+    /**
+     * 2.更新医院上线状态
+     *
+     * @param id
+     * @param status
+     */
+    @Override
+    public void updateStatus(String id, Integer status) {
+        if (status.intValue() == 0 || status.intValue() == 1) {
+            Hospital hospital = hospitalRepository.findById(id).get();
+            hospital.setStatus(status);
+            hospital.setUpdateTime(new Date());
+            hospitalRepository.save(hospital);
+        }
+    }
+
+    /**
+     * 3.获取医院详情
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public Map<String, Object> show(String id) {
+        Map<String, Object> result = new HashMap<>();
+
+        Hospital hospital = this.setHosptiallHosType(hospitalRepository.findById(id).get());
+        //医院基本信息，包含等级
+        result.put("hospital", hospital);
+
+        //单独处理更直观
+        result.put("bookingRule", hospital.getBookingRule());
+        //不需要重复返回
+        hospital.setBookingRule(null);
+        return result;
+    }
+
+
+    /**
+     * 获取查询list集合，遍历进行医院等级封装
+     *
+     * @param hospital
+     */
+    private Hospital setHosptiallHosType(Hospital hospital) {
+        //根据dictCode和value获取医院等级名称
+        String hostypeString = dictFeignClient.getName(DictEnum.HOSTYPE.getDictCode(), hospital.getHostype());
+        String provinceString = dictFeignClient.getName(hospital.getProvinceCode());
+        String cityString = dictFeignClient.getName(hospital.getCityCode());
+        String districtString = dictFeignClient.getName(hospital.getDistrictCode());
+
+        hospital.getParam().put("hostypeString", hostypeString);
+        hospital.getParam().put("fullAddress", provinceString + cityString + districtString + hospital.getAddress());
         return hospital;
     }
 }

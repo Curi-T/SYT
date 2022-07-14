@@ -12,6 +12,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -93,6 +94,46 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
     }
 
     /**
+     * 4.获取数据字典名称
+     * @param parentDictCode
+     * @param value
+     * @return
+     */
+    @Override
+    public String getNameByParentDictCodeAndValue(String parentDictCode, String value) {
+        //如果value能唯一定位数据字典，parentDictCode可以传空，例如：省市区的value值能够唯一确定
+        if(StringUtils.isEmpty(parentDictCode)) {
+            Dict dict = baseMapper.selectOne(new QueryWrapper<Dict>().eq("value", value));
+            if(null != dict) {
+                return dict.getName();
+            }
+        } else {
+            Dict parentDict = this.getByDictCode(parentDictCode);
+            if(null == parentDict) {
+                return "";
+            }
+            Dict dict = baseMapper.selectOne(new QueryWrapper<Dict>().eq("parent_id", parentDict.getId()).eq("value", value));
+            if(null != dict) {
+                return dict.getName();
+            }
+        }
+        return "";
+    }
+
+    /**
+     * 6.根据dictCode获取下一级节点
+     * @param dictCode
+     * @return
+     */
+    @Override
+    public List<Dict> findByDictCode(String dictCode) {
+        //根据dictCode获取id
+        Dict dict = this.getByDictCode(dictCode);
+        //根据id获取子节点
+        return this.findChlidData(dict.getId());
+    }
+
+    /**
      * 判断id下面是否有子节点
      *
      * @param id
@@ -104,6 +145,17 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
         Integer count = baseMapper.selectCount(wrapper);
         // 0>0    1>0
         return count > 0;
+    }
+
+    /**
+     * 根据dictCode查询Dict对象
+     * @param dictCode
+     * @return
+     */
+    private Dict getByDictCode(String dictCode) {
+        QueryWrapper<Dict> wrapper = new QueryWrapper<>();
+        wrapper.eq("dict_code", dictCode);
+        return baseMapper.selectOne(wrapper);
     }
 
 }
