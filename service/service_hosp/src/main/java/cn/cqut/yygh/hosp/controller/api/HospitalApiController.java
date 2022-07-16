@@ -1,6 +1,7 @@
 package cn.cqut.yygh.hosp.controller.api;
 
 import cn.cqut.yygh.common.result.Result;
+import cn.cqut.yygh.hosp.service.DepartmentService;
 import cn.cqut.yygh.hosp.service.HospitalService;
 import cn.cqut.yygh.model.hosp.Hospital;
 import cn.cqut.yygh.vo.hosp.HospitalQueryVo;
@@ -27,6 +28,9 @@ public class HospitalApiController {
 
     @Autowired
     private HospitalService hospitalService;
+
+    @Autowired
+    private DepartmentService departmentService;
 
     /**
      * 1.获取分页列表
@@ -61,5 +65,34 @@ public class HospitalApiController {
             @PathVariable String hosname) {
         return Result.ok(hospitalService.findByHosname(hosname));
     }
+
+    /**
+     * 3.根据医院编号获取科室列表
+     *
+     * @param hoscode
+     * @return
+     */
+    @ApiOperation(value = "3.根据医院编号获取科室列表")
+    @GetMapping("department/{hoscode}")
+    public Result index(
+            @ApiParam(name = "hoscode", value = "医院code", required = true)
+            @PathVariable String hoscode) {
+        return Result.ok(departmentService.findDeptTree(hoscode));
+    }
+
+    /**
+     * 4.根据医院编号获取医院预约挂号详情
+     *
+     * @param hoscode
+     * @return
+     */
+    @ApiOperation(value = "4.根据医院编号获取医院预约挂号详情")
+    @GetMapping("{hoscode}")
+    public Result item(
+            @ApiParam(name = "hoscode", value = "医院code", required = true)
+            @PathVariable String hoscode) {
+        return Result.ok(hospitalService.item(hoscode));
+    }
+
 
 }

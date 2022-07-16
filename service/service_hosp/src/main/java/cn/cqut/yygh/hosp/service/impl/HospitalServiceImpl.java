@@ -85,6 +85,9 @@ public class HospitalServiceImpl implements HospitalService {
      */
     @Override
     public Page selectHospPage(Integer page, Integer limit, HospitalQueryVo hospitalQueryVo) {
+        System.out.println(page);
+        System.out.println(limit);
+        System.out.println(hospitalQueryVo);
         Pageable pageable = PageRequest.of(page - 1, limit);
         ExampleMatcher matcher = ExampleMatcher.matching().withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING).withIgnoreCase(true);
         Hospital hospital = new Hospital();
@@ -160,6 +163,25 @@ public class HospitalServiceImpl implements HospitalService {
     @Override
     public List<Hospital> findByHosname(String hosname) {
         return hospitalRepository.findHospitalByHosnameLike(hosname);
+    }
+
+    /**
+     * 4.根据医院编号获取医院预约挂号详情
+     *
+     * @param hoscode
+     * @return
+     */
+    @Override
+    public Map<String, Object> item(String hoscode) {
+        Map<String, Object> result = new HashMap<>();
+        //医院详情
+        Hospital hospital = this.setHosptiallHosType(this.getByHoscode(hoscode));
+        result.put("hospital", hospital);
+        //预约规则
+        result.put("bookingRule", hospital.getBookingRule());
+        //不需要重复返回
+        hospital.setBookingRule(null);
+        return result;
     }
 
 

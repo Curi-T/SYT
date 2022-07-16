@@ -9,7 +9,8 @@
         <div class="search-container">
             <div class="search-wrapper">
                 <div class="hospital-search">
-                    <el-autocomplete class="search-input" prefix-icon="el-icon-search" v-model="state"
+                    <!-- v-model="state" -->
+                    <el-autocomplete class="search-input" prefix-icon="el-icon-search" 
                         :fetch-suggestions="querySearchAsync" placeholder="点击输入医院名称" @select="handleSelect">
                         <span slot="suffix" class="
                                 search-btn
@@ -225,7 +226,7 @@ export default {
 
         //点击某个医院名称，跳转到详情页面中
         show(hoscode) {
-            window.location.href = '/hospital/' + hoscode
+            window.location.href = '/hosp/' + hoscode
         },
 
         //根据地区查询医院
