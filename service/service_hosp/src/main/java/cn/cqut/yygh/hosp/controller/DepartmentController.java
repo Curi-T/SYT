@@ -16,7 +16,6 @@ import java.util.List;
 @ApiOperation(value = "课设排班")
 @RestController
 @RequestMapping("/admin/hosp/department")
-@CrossOrigin
 public class DepartmentController {
 
     @Autowired

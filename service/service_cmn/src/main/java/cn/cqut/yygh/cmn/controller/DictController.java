@@ -19,7 +19,6 @@ import java.util.List;
  */
 @ApiOperation(value = "数据字典")
 @RestController
-@CrossOrigin
 @RequestMapping("/admin/cmn/dict")
 public class DictController {
 
