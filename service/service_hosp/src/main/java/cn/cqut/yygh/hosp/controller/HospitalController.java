@@ -40,7 +40,7 @@ public class HospitalController {
 
             @ApiParam(name = "hospitalQueryVo", value = "查询对象", required = false)
                     HospitalQueryVo hospitalQueryVo) {
-        return Result.ok(hospitalService.selectPage(page, limit, hospitalQueryVo));
+        return Result.ok(hospitalService.selectHospPage(page, limit, hospitalQueryVo));
     }
 
     /**

@@ -4,6 +4,7 @@ import cn.cqut.yygh.model.hosp.Hospital;
 import cn.cqut.yygh.vo.hosp.HospitalQueryVo;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,7 +34,7 @@ public interface HospitalService {
      * @param hospitalQueryVo
      * @return
      */
-    Page selectPage(Integer page, Integer limit, HospitalQueryVo hospitalQueryVo);
+    Page selectHospPage(Integer page, Integer limit, HospitalQueryVo hospitalQueryVo);
 
     /**
      * 2.更新医院上线状态
@@ -58,4 +59,12 @@ public interface HospitalService {
      * @return
      */
     String getHospName(String hoscode);
+
+    /**
+     * 2.根据医院名称获取医院列表
+     *
+     * @param hosname
+     * @return
+     */
+    List<Hospital> findByHosname(String hosname);
 }

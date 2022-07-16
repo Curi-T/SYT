@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -83,7 +84,7 @@ public class HospitalServiceImpl implements HospitalService {
      * @return
      */
     @Override
-    public Page selectPage(Integer page, Integer limit, HospitalQueryVo hospitalQueryVo) {
+    public Page selectHospPage(Integer page, Integer limit, HospitalQueryVo hospitalQueryVo) {
         Pageable pageable = PageRequest.of(page - 1, limit);
         ExampleMatcher matcher = ExampleMatcher.matching().withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING).withIgnoreCase(true);
         Hospital hospital = new Hospital();
@@ -148,6 +149,17 @@ public class HospitalServiceImpl implements HospitalService {
             return hospital.getHosname();
         }
         return null;
+    }
+
+    /**
+     * 2.根据医院名称获取医院列表
+     *
+     * @param hosname
+     * @return
+     */
+    @Override
+    public List<Hospital> findByHosname(String hosname) {
+        return hospitalRepository.findHospitalByHosnameLike(hosname);
     }
 
 

@@ -127,6 +127,7 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
      */
     @Override
     public List<Dict> findByDictCode(String dictCode) {
+        System.out.println(dictCode);
         //根据dictCode获取id
         Dict dict = this.getByDictCode(dictCode);
         //根据id获取子节点
