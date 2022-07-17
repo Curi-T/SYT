@@ -35,8 +35,7 @@
         </div>
         <!-- 登录弹出层 -->
         <el-dialog :visible.sync="dialogUserFormVisible" style="text-align: left;" top="50px" :append-to-body="true"
-            width="960px" @close="closeDialog()"
-            v-if="dialogUserFormVisible">
+            width="960px" @close="closeDialog()" v-if="dialogUserFormVisible">
             <div class="container">
 
                 <!-- 手机登录 #start -->
@@ -140,20 +139,31 @@ export default {
                 openid: ''
             },
 
-            
+
 
             dialogUserFormVisible: false,
             // 弹出层相关属性
             dialogAtrr: defaultDialogAtrr,
 
             name: '', // 用户登录显示的名称
-            
+
         }
     },
 
     created() {
         this.showInfo()
     },
+    
+    mounted() {
+        // 注册全局登录事件对象
+        window.loginEvent = new Vue();
+        // 监听登录事件
+        loginEvent.$on('loginDialogEvent', function () {
+            document.getElementById("loginDialog").click();
+        })
+        // 触发事件，显示登录层：loginEvent.$emit('loginDialogEvent')
+    },
+
     methods: {
         // 绑定登录或获取验证码按钮
         btnClick() {
@@ -295,7 +305,7 @@ export default {
             this.showLogin()
         },
 
-        
+
 
     }
 }

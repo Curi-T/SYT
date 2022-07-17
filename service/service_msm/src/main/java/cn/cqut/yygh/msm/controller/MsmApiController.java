@@ -43,12 +43,15 @@ public class MsmApiController {
         }
         //如果从redis获取不到，
         // 生成验证码，
-        code = RandomUtil.getSixBitRandom();
+//        code = RandomUtil.getSixBitRandom();
+        //TODO 生成验证码
+        code = "123456";
+        boolean isSend = true;
         //调用service方法，通过整合短信服务进行发送
-        boolean isSend = msmService.send(phone, code);
+//        boolean isSend = msmService.send(phone, code);
         //生成验证码放到redis里面，设置有效时间
         if (isSend) {
-            redisTemplate.opsForValue().set(phone, code, 30, TimeUnit.MINUTES);
+            redisTemplate.opsForValue().set(phone, code, 1, TimeUnit.MINUTES);
             return Result.ok();
         } else {
             return Result.fail().message("发送短信失败");
