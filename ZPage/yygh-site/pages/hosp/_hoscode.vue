@@ -105,6 +105,7 @@ import '~/assets/css/hospital.css'
 import cookie from 'js-cookie'
 
 import hospitalApi from '@/api/hosp'
+import userInfoApi from '@/api/userInfo'
 
 export default {
     data() {
@@ -133,8 +134,20 @@ export default {
                 loginEvent.$emit('loginDialogEvent')
                 return
             }
+
+            //判断认证
+            userInfoApi.getUserInfo().then(response => {
+                let authStatus = response.data.authStatus
+                // 状态为2认证通过
+                if (!authStatus || authStatus != 2) {
+                    window.location.href = '/user'
+                    return
+                }
+            })
+
             window.location.href = '/hospital/schedule?hoscode=' + this.hospital.hoscode + "&depcode=" + depcode
         },
+
 
 
         init() {
@@ -153,10 +166,6 @@ export default {
             this.activeIndex = index
             document.getElementById(depcode).scrollIntoView();
         },
-
-        // schedule(depcode) {
-        //     window.location.href = '/hospital/schedule?hoscode=' + this.hoscode + "&depcode=" + depcode
-        // }
     }
 }
 </script>
