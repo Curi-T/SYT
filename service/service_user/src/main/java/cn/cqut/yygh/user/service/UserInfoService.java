@@ -17,4 +17,12 @@ public interface UserInfoService extends IService<UserInfo> {
      * @return
      */
     Map<String, Object> login(LoginVo loginVo);
+
+    /**
+     * 先根据openid进行数据库查询
+     *
+     * @param openId
+     * @return
+     */
+    UserInfo getByOpenid(String openId);
 }

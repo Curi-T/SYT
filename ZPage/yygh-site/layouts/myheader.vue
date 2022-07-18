@@ -309,16 +309,16 @@ export default {
             window.location.href = '/hospital/' + item.hoscode
         },
 
+        //微信回调方法
         loginCallback(name, token, openid) {
             // 打开手机登录层，绑定手机号，改逻辑与手机登录一致
-            if (openid != '') {
+            if (openid != "directLogin") {
                 this.userInfo.openid = openid
                 this.showLogin()
             } else {
                 this.setCookies(name, token)
             }
         },
-
 
         weixinLogin() {
             this.dialogAtrr.showLoginType = 'weixin'

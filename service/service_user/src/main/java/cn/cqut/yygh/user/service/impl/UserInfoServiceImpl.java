@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,6 +27,7 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
 
     @Autowired
     private RedisTemplate redisTemplate;
+
     /**
      * 1.会员手机号登录
      *
@@ -38,34 +40,52 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         String code = loginVo.getCode();
 
         //验证手机号、验证码是否为空
-        if(StringUtils.isEmpty(phone) || StringUtils.isEmpty(code)) {
+        if (StringUtils.isEmpty(phone) || StringUtils.isEmpty(code)) {
             throw new YyghException(ResultCodeEnum.PARAM_ERROR);
         }
 
         //登录-校验校验验证码
         //校验校验验证码
 //        String mobleCode = redisTemplate.opsForValue().get(phone)+"";
-        //TODO 验证码校验
+        //TODO 验证码校验 123456
         String mobleCode = "123456";
-        if(!code.equals(mobleCode)) {
+        if (!code.equals(mobleCode)) {
             throw new YyghException(ResultCodeEnum.CODE_ERROR);
         }
 
+        //绑定手机号码
+        UserInfo userInfo = null;
+        if (!StringUtils.isEmpty(loginVo.getOpenid())) {
+            userInfo = this.getByOpenid(loginVo.getOpenid());
+            if (null != userInfo) {
+                userInfo.setPhone(loginVo.getPhone());
+                this.updateById(userInfo);
+            } else {
+                throw new YyghException(ResultCodeEnum.DATA_ERROR);
+            }
+        }
 
-        //手机号已被使用
-        QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("phone", phone);
-        //获取会员
-        UserInfo userInfo = baseMapper.selectOne(queryWrapper);
-        if(null == userInfo) {
-            userInfo = new UserInfo();
-            userInfo.setName("");
-            userInfo.setPhone(phone);
-            userInfo.setStatus(1);
-            this.save(userInfo);
+
+        //userInfo=null 说明手机直接登录
+        if (null == userInfo) {
+            //手机号已被使用
+            QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("phone", phone);
+            //获取会员
+            userInfo = baseMapper.selectOne(queryWrapper);
+            //TODO 暂时解决先手机号登录、后微信登录绑定统一手机号问题，采取后微信登录的数据
+//            List<UserInfo> userInfos = baseMapper.selectList(queryWrapper);
+//            userInfo = userInfos.get(userInfos.size() - 1);
+            if (null == userInfo) {
+                userInfo = new UserInfo();
+                userInfo.setName("");
+                userInfo.setPhone(phone);
+                userInfo.setStatus(1);
+                this.save(userInfo);
+            }
         }
         //校验是否被禁用
-        if(userInfo.getStatus() == 0) {
+        if (userInfo.getStatus() == 0) {
             throw new YyghException(ResultCodeEnum.LOGIN_DISABLED_ERROR);
         }
 
@@ -77,16 +97,27 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         //返回页面显示名称
         Map<String, Object> map = new HashMap<>();
         String name = userInfo.getName();
-        if(StringUtils.isEmpty(name)) {
+        if (StringUtils.isEmpty(name)) {
             name = userInfo.getNickName();
         }
-        if(StringUtils.isEmpty(name)) {
+        if (StringUtils.isEmpty(name)) {
             name = userInfo.getPhone();
         }
         map.put("name", name);
 
         String token = JwtHelper.createToken(userInfo.getId(), name);
-        map.put("token",token);
+        map.put("token", token);
         return map;
+    }
+
+    /**
+     * 先根据openid进行数据库查询
+     *
+     * @param openId
+     * @return
+     */
+    @Override
+    public UserInfo getByOpenid(String openId) {
+        return baseMapper.selectOne(new QueryWrapper<UserInfo>().eq("openid", openId));
     }
 }
