@@ -2,6 +2,7 @@ package cn.cqut.yygh.user.service;
 
 import cn.cqut.yygh.model.user.UserInfo;
 import cn.cqut.yygh.vo.user.LoginVo;
+import cn.cqut.yygh.vo.user.UserAuthVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.Map;
@@ -25,4 +26,11 @@ public interface UserInfoService extends IService<UserInfo> {
      * @return
      */
     UserInfo getByOpenid(String openId);
+
+    /**
+     * 用户认证接口
+     * @param userId
+     * @param userAuthVo
+     */
+    void userAuth(Long userId, UserAuthVo userAuthVo);
 }

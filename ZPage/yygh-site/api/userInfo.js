@@ -9,5 +9,23 @@ export default {
             method: `post`,
             data: userInfo
         })
+    },
+
+    //根据userId获取用户信息
+    getUserInfo() {
+        return request({
+            url: `${api_name}/auth/getUserInfo`,
+            method: `get`
+        })
+    },
+
+    //用户认证
+    saveUserAuth(userAuah) {
+        return request({
+            url: `${api_name}/auth/userAuth`,
+            method: 'post',
+            data: userAuah
+        })
     }
+
 }
