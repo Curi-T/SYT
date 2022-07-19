@@ -36,18 +36,18 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getURI().getPath();
-        System.out.println("==="+path);
+        System.out.println("===" + path);
 
         //内部服务接口，不允许外部访问
-        if(antPathMatcher.match("/**/inner/**", path)) {
+        if (antPathMatcher.match("/**/inner/**", path)) {
             ServerHttpResponse response = exchange.getResponse();
             return out(response, ResultCodeEnum.PERMISSION);
         }
 
-        Long userId = this.getUserId(request);
         //api接口，异步请求，校验用户必须登录
-        if(antPathMatcher.match("/api/**/auth/**", path)) {
-            if(StringUtils.isEmpty(userId)) {
+        if (antPathMatcher.match("/api/**/auth/**", path)) {
+            Long userId = this.getUserId(request);
+            if (StringUtils.isEmpty(userId)) {
                 ServerHttpResponse response = exchange.getResponse();
                 return out(response, ResultCodeEnum.LOGIN_AUTH);
             }
@@ -62,6 +62,7 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
 
     /**
      * api接口鉴权失败返回数据
+     *
      * @param response
      * @return
      */
@@ -76,16 +77,17 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
 
     /**
      * 获取当前登录用户id
+     *
      * @param request
      * @return
      */
     private Long getUserId(ServerHttpRequest request) {
         String token = "";
         List<String> tokenList = request.getHeaders().get("token");
-        if(null  != tokenList) {
+        if (null != tokenList) {
             token = tokenList.get(0);
         }
-        if(!StringUtils.isEmpty(token)) {
+        if (!StringUtils.isEmpty(token)) {
             return JwtHelper.getUserId(token);
         }
         return null;

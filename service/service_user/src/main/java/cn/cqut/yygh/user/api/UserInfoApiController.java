@@ -1,4 +1,4 @@
-package cn.cqut.yygh.user.controller;
+package cn.cqut.yygh.user.api;
 
 import cn.cqut.yygh.common.result.Result;
 import cn.cqut.yygh.common.utils.AuthContextHolder;
