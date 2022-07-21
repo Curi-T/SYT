@@ -1,6 +1,7 @@
 package cn.cqut.yygh.hosp.service;
 
 import cn.cqut.yygh.model.hosp.HospitalSet;
+import cn.cqut.yygh.vo.order.SignInfoVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -14,4 +15,12 @@ public interface HospitalSetService extends IService<HospitalSet> {
      * @return
      */
     String getSignKey(String hoscode);
+
+    /**
+     * 获取医院签名信息
+     *
+     * @param hoscode
+     * @return
+     */
+    SignInfoVo getSignInfoVo(String hoscode);
 }

@@ -1,6 +1,7 @@
 package cn.cqut.yygh.hosp.service;
 
 import cn.cqut.yygh.model.hosp.Schedule;
+import cn.cqut.yygh.vo.hosp.ScheduleOrderVo;
 import cn.cqut.yygh.vo.hosp.ScheduleQueryVo;
 import org.springframework.data.domain.Page;
 
@@ -56,4 +57,31 @@ public interface ScheduleService {
      * @return
      */
     List<Schedule> getDetailSchedule(String hoscode, String depcode, String workDate);
+
+    /**
+     * 5.获取可预约排班数据
+     *
+     * @param page
+     * @param limit
+     * @param hoscode
+     * @param depcode
+     * @return
+     */
+    Object getBookingScheduleRule(Integer page, Integer limit, String hoscode, String depcode);
+
+    /**
+     * 根据id获取排班
+     *
+     * @param scheduleId
+     * @return
+     */
+    Schedule getScheduleById(String scheduleId);
+
+    /**
+     * 根据排班id获取预约下单数据
+     *
+     * @param scheduleId
+     * @return
+     */
+    ScheduleOrderVo getScheduleOrderVo(String scheduleId);
 }

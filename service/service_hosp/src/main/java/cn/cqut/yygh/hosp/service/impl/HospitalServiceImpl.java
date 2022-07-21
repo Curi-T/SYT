@@ -85,9 +85,6 @@ public class HospitalServiceImpl implements HospitalService {
      */
     @Override
     public Page selectHospPage(Integer page, Integer limit, HospitalQueryVo hospitalQueryVo) {
-        System.out.println(page);
-        System.out.println(limit);
-        System.out.println(hospitalQueryVo);
         Pageable pageable = PageRequest.of(page - 1, limit);
         ExampleMatcher matcher = ExampleMatcher.matching().withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING).withIgnoreCase(true);
         Hospital hospital = new Hospital();
