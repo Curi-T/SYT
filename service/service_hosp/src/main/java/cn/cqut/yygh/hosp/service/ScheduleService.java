@@ -84,4 +84,10 @@ public interface ScheduleService {
      * @return
      */
     ScheduleOrderVo getScheduleOrderVo(String scheduleId);
+
+    /**
+     * 修改排班
+     */
+    void update(Schedule schedule);
+
 }

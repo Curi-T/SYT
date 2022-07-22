@@ -1,6 +1,9 @@
 package cn.cqut.yygh.order.service;
 
 import cn.cqut.yygh.model.order.OrderInfo;
+import cn.cqut.yygh.vo.order.OrderQueryVo;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -16,4 +19,10 @@ public interface OrderService extends IService<OrderInfo> {
      * @return
      */
     Long saveOrder(String scheduleId, Long patientId);
+
+    /**
+     * 分页列表
+     */
+    IPage<OrderInfo> selectPage(Page<OrderInfo> pageParam, OrderQueryVo orderQueryVo);
+
 }

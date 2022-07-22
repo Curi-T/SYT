@@ -157,6 +157,7 @@ import '~/assets/css/hospital.css'
 
 import hospitalApi from '@/api/hosp'
 import patientApi from '@/api/patient'
+import orderInfoApi from '@/api/orderInfo'
 
 export default {
 

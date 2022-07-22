@@ -2,6 +2,7 @@ package cn.cqut.yygh.msm.service.impl;
 
 import cn.cqut.yygh.msm.service.MsmService;
 import cn.cqut.yygh.msm.utils.ConstantPropertiesUtils;
+import cn.cqut.yygh.vo.msm.MsmVo;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.CommonRequest;
 import com.aliyuncs.CommonResponse;
@@ -70,6 +71,23 @@ public class MsmServiceImpl implements MsmService {
             e.printStackTrace();
         } catch (ClientException e) {
             e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * MQ发送短信封装
+     *
+     * @param msmVo
+     * @return
+     */
+    @Override
+    public boolean send(MsmVo msmVo) {
+        if (!StringUtils.isEmpty(msmVo.getPhone())) {
+            String code = (String) msmVo.getParam().get("code");
+            //TODO MQ短信发送
+            System.err.println("MQ短信发送===================================");
+//            return this.send(msmVo.getPhone(), code);
         }
         return false;
     }

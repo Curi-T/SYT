@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
-public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> implements ScheduleService {
+public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper, Schedule> implements ScheduleService {
 
     @Autowired
     private ScheduleRepository scheduleRepository;
@@ -313,7 +313,7 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
     public ScheduleOrderVo getScheduleOrderVo(String scheduleId) {
         ScheduleOrderVo scheduleOrderVo = new ScheduleOrderVo();
         //排班信息
-        Schedule schedule = baseMapper.selectById(scheduleId);
+        Schedule schedule =this.getScheduleById(scheduleId);
         if (null == schedule) {
             throw new YyghException(ResultCodeEnum.PARAM_ERROR);
         }
@@ -356,6 +356,13 @@ public class ScheduleServiceImpl extends ServiceImpl<ScheduleMapper,Schedule> im
         DateTime stopTime = this.getDateTime(new Date(), bookingRule.getStopTime());
         scheduleOrderVo.setStartTime(startTime.toDate());
         return scheduleOrderVo;
+    }
+
+    @Override
+    public void update(Schedule schedule) {
+        schedule.setUpdateTime(new Date());
+        //主键一致就是更新
+        scheduleRepository.save(schedule);
     }
 
 
