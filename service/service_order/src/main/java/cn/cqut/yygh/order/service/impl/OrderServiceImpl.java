@@ -176,14 +176,24 @@ public class OrderServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo> im
         return orderInfo.getId();
     }
 
-    //订单列表（条件查询带分页）
+    /**
+     * 订单列表（条件查询带分页）
+     *
+     * @param pageParam
+     * @param orderQueryVo
+     * @return
+     */
     @Override
     public IPage<OrderInfo> selectPage(Page<OrderInfo> pageParam, OrderQueryVo orderQueryVo) {
         //orderQueryVo获取条件值
-        String name = orderQueryVo.getKeyword(); //医院名称
-        Long patientId = orderQueryVo.getPatientId(); //就诊人名称
-        String orderStatus = orderQueryVo.getOrderStatus(); //订单状态
-        String reserveDate = orderQueryVo.getReserveDate();//安排时间
+        //医院名称
+        String name = orderQueryVo.getKeyword();
+        //就诊人id
+        Long patientId = orderQueryVo.getPatientId();
+        //订单状态
+        String orderStatus = orderQueryVo.getOrderStatus();
+        //安排时间
+        String reserveDate = orderQueryVo.getReserveDate();
         String createTimeBegin = orderQueryVo.getCreateTimeBegin();
         String createTimeEnd = orderQueryVo.getCreateTimeEnd();
         //对条件值进行非空判断
@@ -225,6 +235,23 @@ public class OrderServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo> im
     public OrderInfo getOrder(String orderId) {
         OrderInfo orderInfo = baseMapper.selectById(orderId);
         return this.packOrderInfo(orderInfo);
+    }
+
+    /**
+     * 获取订单
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public Map<String, Object> show(Long id) {
+        Map<String, Object> map = new HashMap<>();
+        OrderInfo orderInfo = this.packOrderInfo(this.getById(id));
+        map.put("orderInfo", orderInfo);
+        Patient patient
+                = patientFeignClient.getPatient(orderInfo.getPatientId());
+        map.put("patient", patient);
+        return map;
     }
 
     private OrderInfo packOrderInfo(OrderInfo orderInfo) {

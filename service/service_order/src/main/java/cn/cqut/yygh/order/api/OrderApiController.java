@@ -58,7 +58,15 @@ public class OrderApiController {
     }
 
 
-    //订单列表（条件查询带分页）
+    /**
+     * 订单列表（条件查询带分页）
+     *
+     * @param page
+     * @param limit
+     * @param orderQueryVo
+     * @param request
+     * @return
+     */
     @GetMapping("auth/{page}/{limit}")
     public Result list(@PathVariable Long page,
                        @PathVariable Long limit,
@@ -71,6 +79,11 @@ public class OrderApiController {
         return Result.ok(pageModel);
     }
 
+    /**
+     * 获取订单状态
+     *
+     * @return
+     */
     @ApiOperation(value = "获取订单状态")
     @GetMapping("auth/getStatusList")
     public Result getStatusList() {
