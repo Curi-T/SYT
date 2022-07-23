@@ -45,6 +45,19 @@ public class OrderApiController {
         return Result.ok(orderService.saveOrder(scheduleId, patientId));
     }
 
+    /**
+     * 根据订单id查询订单详情
+     *
+     * @param orderId
+     * @return
+     */
+    @GetMapping("auth/getOrders/{orderId}")
+    public Result getOrders(@PathVariable String orderId) {
+        OrderInfo orderInfo = orderService.getOrder(orderId);
+        return Result.ok(orderInfo);
+    }
+
+
     //订单列表（条件查询带分页）
     @GetMapping("auth/{page}/{limit}")
     public Result list(@PathVariable Long page,
@@ -52,9 +65,9 @@ public class OrderApiController {
                        OrderQueryVo orderQueryVo, HttpServletRequest request) {
         //设置当前用户id
         orderQueryVo.setUserId(AuthContextHolder.getUserId(request));
-        Page<OrderInfo> pageParam = new Page<>(page,limit);
+        Page<OrderInfo> pageParam = new Page<>(page, limit);
         IPage<OrderInfo> pageModel =
-                orderService.selectPage(pageParam,orderQueryVo);
+                orderService.selectPage(pageParam, orderQueryVo);
         return Result.ok(pageModel);
     }
 
