@@ -1,17 +1,24 @@
 package cn.cqut.yygh.order.service.impl;
 
 import cn.cqut.yygh.enums.PaymentTypeEnum;
+import cn.cqut.yygh.enums.RefundStatusEnum;
 import cn.cqut.yygh.model.order.OrderInfo;
+import cn.cqut.yygh.model.order.PaymentInfo;
+import cn.cqut.yygh.model.order.RefundInfo;
 import cn.cqut.yygh.order.service.OrderService;
 import cn.cqut.yygh.order.service.PaymentService;
+import cn.cqut.yygh.order.service.RefundInfoService;
 import cn.cqut.yygh.order.service.WeixinService;
 import cn.cqut.yygh.order.utils.ConstantPropertiesUtils;
 import cn.cqut.yygh.order.utils.HttpClient;
+import com.alibaba.fastjson.JSONObject;
+import com.github.wxpay.sdk.WXPayConstants;
 import com.github.wxpay.sdk.WXPayUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -25,10 +32,16 @@ public class WeixinServiceImpl implements WeixinService {
 
     @Autowired
     private OrderService orderService;
+
     @Autowired
+
     private PaymentService paymentService;
     @Autowired
+
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private RefundInfoService refundInfoService;
 
 
     /**
@@ -124,5 +137,63 @@ public class WeixinServiceImpl implements WeixinService {
             return null;
         }
 
+    }
+
+    /**
+     * 退款
+     *
+     * @param orderId
+     * @return
+     */
+    @Override
+    public Boolean refund(Long orderId) {
+        try {
+            //获取退款记录
+            PaymentInfo paymentInfoQuery = paymentService.getPaymentInfo(orderId, PaymentTypeEnum.WEIXIN.getStatus());
+
+            RefundInfo refundInfo = refundInfoService.saveRefundInfo(paymentInfoQuery);
+            if (refundInfo.getRefundStatus().intValue() == RefundStatusEnum.REFUND.getStatus().intValue()) {
+                return true;
+            }
+            Map<String, String> paramMap = new HashMap<>(8);
+            //公众账号ID
+            paramMap.put("appid", ConstantPropertiesUtils.APPID);
+            //商户编号
+            paramMap.put("mch_id", ConstantPropertiesUtils.PARTNER);
+            paramMap.put("nonce_str", WXPayUtil.generateNonceStr());
+            //微信订单号
+            paramMap.put("transaction_id", paymentInfoQuery.getTradeNo());
+            //商户订单编号
+            paramMap.put("out_trade_no", paymentInfoQuery.getOutTradeNo());
+            //商户退款单号
+            paramMap.put("out_refund_no", "tk" + paymentInfoQuery.getOutTradeNo());
+            //paramMap.put("total_fee",paymentInfoQuery.getTotalAmount().multiply(new BigDecimal("100")).longValue()+"");
+            //paramMap.put("refund_fee",paymentInfoQuery.getTotalAmount().multiply(new BigDecimal("100")).longValue()+"");
+            paramMap.put("total_fee", "1");
+            paramMap.put("refund_fee", "1");
+            String paramXml = WXPayUtil.generateSignedXml(paramMap, ConstantPropertiesUtils.PARTNERKEY);
+            HttpClient client = new HttpClient("https://api.mch.weixin.qq.com/secapi/pay/refund");
+            client.setXmlParam(paramXml);
+            client.setHttps(true);
+            client.setCert(true);
+            client.setCertPassword(ConstantPropertiesUtils.PARTNER);
+            client.post();
+
+            //3、返回第三方的数据
+            String xml = client.getContent();
+            Map<String, String> resultMap = WXPayUtil.xmlToMap(xml);
+            if (null != resultMap && WXPayConstants.SUCCESS.equalsIgnoreCase(resultMap.get("result_code"))) {
+                refundInfo.setCallbackTime(new Date());
+                refundInfo.setTradeNo(resultMap.get("refund_id"));
+                refundInfo.setRefundStatus(RefundStatusEnum.REFUND.getStatus());
+                refundInfo.setCallbackContent(JSONObject.toJSONString(resultMap));
+                refundInfoService.updateById(refundInfo);
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

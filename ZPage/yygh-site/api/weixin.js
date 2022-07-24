@@ -25,6 +25,15 @@ export default {
             method: 'get'
         })
     },
+
+    //取消订单
+    cancelOrder(orderId) {
+        return request({
+            url: `/api/order/orderInfo/auth/cancelOrder/${orderId}`,
+            method: 'get'
+        })
+    },
+    
     
 
 }

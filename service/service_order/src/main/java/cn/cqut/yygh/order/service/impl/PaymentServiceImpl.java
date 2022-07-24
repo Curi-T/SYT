@@ -97,20 +97,36 @@ public class PaymentServiceImpl extends ServiceImpl<PaymentInfoMapper, PaymentIn
         // 调用医院接口，通知更新支付状态
         SignInfoVo signInfoVo
                 = hospitalFeignClient.getSignInfoVo(orderInfo.getHoscode());
-        if(null == signInfoVo) {
+        if (null == signInfoVo) {
             throw new YyghException(ResultCodeEnum.PARAM_ERROR);
         }
         Map<String, Object> reqMap = new HashMap<>();
-        reqMap.put("hoscode",orderInfo.getHoscode());
-        reqMap.put("hosRecordId",orderInfo.getHosRecordId());
+        reqMap.put("hoscode", orderInfo.getHoscode());
+        reqMap.put("hosRecordId", orderInfo.getHosRecordId());
         reqMap.put("timestamp", HttpRequestHelper.getTimestamp());
         String sign = HttpRequestHelper.getSign(reqMap, signInfoVo.getSignKey());
         reqMap.put("sign", sign);
-        JSONObject result = HttpRequestHelper.sendRequest(reqMap, signInfoVo.getApiUrl()+"/order/updatePayStatus");
-        if(result.getInteger("code") != 200) {
+        JSONObject result = HttpRequestHelper.sendRequest(reqMap, signInfoVo.getApiUrl() + "/order/updatePayStatus");
+        if (result.getInteger("code") != 200) {
             throw new YyghException(result.getString("message"), ResultCodeEnum.FAIL.getCode());
         }
     }
+
+    /**
+     * 获取支付记录
+     *
+     * @param orderId
+     * @param paymentType
+     * @return
+     */
+    @Override
+    public PaymentInfo getPaymentInfo(Long orderId, Integer paymentType) {
+        QueryWrapper<PaymentInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("order_id", orderId);
+        queryWrapper.eq("payment_type", paymentType);
+        return baseMapper.selectOne(queryWrapper);
+    }
+
 
     /**
      * 获取支付记录
