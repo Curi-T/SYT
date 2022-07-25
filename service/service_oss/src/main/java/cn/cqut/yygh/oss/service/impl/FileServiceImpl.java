@@ -18,6 +18,7 @@ import java.util.UUID;
  */
 @Service
 public class FileServiceImpl implements FileService {
+
     /**
      * 上传文件到阿里云oss
      *

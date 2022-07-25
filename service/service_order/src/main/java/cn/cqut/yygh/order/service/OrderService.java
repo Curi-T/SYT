@@ -1,6 +1,7 @@
 package cn.cqut.yygh.order.service;
 
 import cn.cqut.yygh.model.order.OrderInfo;
+import cn.cqut.yygh.vo.order.OrderCountQueryVo;
 import cn.cqut.yygh.vo.order.OrderQueryVo;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -55,4 +56,12 @@ public interface OrderService extends IService<OrderInfo> {
      * 就诊提醒
      */
     void patientTips();
+
+    /**
+     * 订单统计
+     * @param orderCountQueryVo
+     * @return
+     */
+    Map<String, Object> getCountMap(OrderCountQueryVo orderCountQueryVo);
+
 }

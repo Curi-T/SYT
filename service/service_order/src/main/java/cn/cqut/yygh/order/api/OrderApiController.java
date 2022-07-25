@@ -5,6 +5,7 @@ import cn.cqut.yygh.common.utils.AuthContextHolder;
 import cn.cqut.yygh.enums.OrderStatusEnum;
 import cn.cqut.yygh.model.order.OrderInfo;
 import cn.cqut.yygh.order.service.OrderService;
+import cn.cqut.yygh.vo.order.OrderCountQueryVo;
 import cn.cqut.yygh.vo.order.OrderQueryVo;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * @author CuriT
@@ -104,5 +106,15 @@ public class OrderApiController {
         return Result.ok(orderService.cancelOrder(orderId));
     }
 
+    /**
+     * 获取订单统计数据
+     * @param orderCountQueryVo
+     * @return
+     */
+    @ApiOperation(value = "获取订单统计数据")
+    @PostMapping("inner/getCountMap")
+    public Map<String, Object> getCountMap(@RequestBody OrderCountQueryVo orderCountQueryVo) {
+        return orderService.getCountMap(orderCountQueryVo);
+    }
 
 }

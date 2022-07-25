@@ -9,26 +9,11 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     
-    <artifactId>service-hosp-client</artifactId>
+    <artifactId>service-order-client</artifactId>
     
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
-    
-    <dependencies>
-        <dependency>
-            <groupId>cn.cqut</groupId>
-            <artifactId>service-cmn-client</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>cn.cqut</groupId>
-            <artifactId>service-user-client</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
-
 
 </project>

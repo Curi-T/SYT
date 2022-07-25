@@ -3,13 +3,13 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>service-client</artifactId>
+        <artifactId>service</artifactId>
         <groupId>cn.cqut</groupId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     
-    <artifactId>service-hosp-client</artifactId>
+    <artifactId>service_statistics</artifactId>
     
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -19,15 +19,10 @@
     <dependencies>
         <dependency>
             <groupId>cn.cqut</groupId>
-            <artifactId>service-cmn-client</artifactId>
+            <artifactId>service-order-client</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         
-        <dependency>
-            <groupId>cn.cqut</groupId>
-            <artifactId>service-user-client</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
     </dependencies>
 
 

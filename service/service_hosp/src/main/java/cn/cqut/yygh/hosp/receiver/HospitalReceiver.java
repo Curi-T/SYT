@@ -44,10 +44,10 @@ public class HospitalReceiver {
             scheduleService.update(schedule);
         } else {
             //取消预约更新预约数
-            Schedule schedule = scheduleService.getScheduleById(orderMqVo.getScheduleId());
-            int availableNumber = schedule.getAvailableNumber().intValue() + 1;
-            schedule.setAvailableNumber(availableNumber);
-            scheduleService.update(schedule);
+//            Schedule schedule = scheduleService.getScheduleById(orderMqVo.getScheduleId());
+//            int availableNumber = schedule.getAvailableNumber().intValue() + 1;
+//            schedule.setAvailableNumber(availableNumber);
+//            scheduleService.update(schedule);
         }
         //发送短信
         MsmVo msmVo = orderMqVo.getMsmVo();
